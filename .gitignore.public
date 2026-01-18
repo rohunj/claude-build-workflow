@@ -8,8 +8,6 @@
 ralph-source/
 bmad-source/
 amp-skills-source/
-vercel-skills-source/
-secops-source/
 
 # Build artifacts
 build.log

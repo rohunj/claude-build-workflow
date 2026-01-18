@@ -1,0 +1,13 @@
+# Source repos (for reference only)
+ralph-source/
+bmad-source/
+amp-skills-source/
+
+# Build artifacts
+build.log
+archive/
+.last-branch
+.build-pid
+
+# OS files
+.DS_Store

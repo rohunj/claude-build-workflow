@@ -2,6 +2,9 @@
 
 When a user asks you to "run the workflow" or "start a new project" using this folder, follow these steps in order. Guide the user through each phase conversationally.
 
+**IMPORTANT: Automatic Skill Usage**
+Read `skills/SKILLS-INDEX.md` at the start of every project. This tells you which skills to apply automatically based on the project type and tech stack. You should use these skills transparently without requiring manual invocation from the user.
+
 ---
 
 ## PHASE 0: Check Setup
@@ -89,7 +92,7 @@ Say: "PRD created! Let me read it back to you..." and summarize the key user sto
 
 ---
 
-## PHASE 4: Technical Architecture
+## PHASE 4: Technical Architecture & Security
 
 Say:
 > "Now let's figure out the technical approach. Based on what we're building, here's what I'm thinking..."
@@ -104,6 +107,14 @@ Ask:
 > "Does this technical approach work for you, or do you have preferences?"
 
 After alignment, save architecture notes to `tasks/architecture.md`.
+
+**Security Threat Modeling:**
+Read `skills/security/pytm/SKILL.md` and consider basic threat modeling:
+- What data is sensitive? (user data, credentials, etc.)
+- What are the main attack surfaces? (APIs, user input, auth)
+- What security measures are needed? (input validation, encryption, auth)
+
+Add security notes to `tasks/architecture.md` under a "Security Considerations" section.
 
 ---
 
@@ -279,3 +290,66 @@ Tell them:
 - Push to GitHub frequently so phone access stays current
 - If the user seems confused, explain what you're doing and why
 - Keep the conversation friendly and move at the user's pace
+
+---
+
+## Automatic Skill Application (During Build)
+
+When Ralph is building stories, Claude should automatically apply relevant skills:
+
+### For React/Next.js Projects
+- Reference `skills/react-best-practices/SKILL.md` when writing components
+- Apply the 45 performance rules automatically (async patterns, bundle optimization, etc.)
+- Use proper data fetching patterns from the guidelines
+
+### For All Web Projects
+- Reference `skills/web-design-guidelines/SKILL.md` for UI components
+- Fetch latest guidelines from the source URL in that skill
+- Apply accessibility and UX best practices automatically
+
+### Security Scanning (Every Story)
+Before marking any story as complete:
+
+1. **Run Semgrep for vulnerabilities:**
+```bash
+semgrep --config=auto --severity=ERROR --severity=WARNING .
+```
+If issues found, fix them before completing the story.
+
+2. **Check for hardcoded secrets:**
+```bash
+gitleaks protect --staged --redact
+```
+If secrets detected, remove them and use environment variables instead.
+
+### After Deployment (Test & Fix Loop)
+When the app is deployed, use the build-test-fix loop:
+
+1. **Test:** Read `skills/test-and-break/SKILL.md` and test the deployed app
+2. **Report:** Generate bug report to `tasks/bug-report-*.md`
+3. **Convert:** Read `skills/bugs-to-stories/SKILL.md` to convert bugs to stories
+4. **Fix:** Run Ralph again to fix the bugs
+5. **Repeat:** Until no bugs found
+
+Or run the automated loop:
+```bash
+./build-test-fix-loop.sh [deployment_url] [max_cycles]
+```
+
+---
+
+## Skill Reference
+
+All skills are in the `skills/` folder. Claude reads and applies them automatically based on context:
+
+| Skill | Auto-Triggers On |
+|-------|------------------|
+| `security/*` | Every code change |
+| `react-best-practices` | React/Next.js projects |
+| `web-design-guidelines` | Any web UI |
+| `edge-cases` | PRD refinement |
+| `story-quality` | Before prd.json conversion |
+| `test-and-break` | After deployment |
+| `bugs-to-stories` | After testing |
+
+See `skills/SKILLS-INDEX.md` for the complete skill selection matrix.
