@@ -155,6 +155,33 @@ Say:
 
 ## PHASE 7: Convert to prd.json
 
+**IMPORTANT: Check for existing prd.json first!**
+
+Before creating a new prd.json, check if one already exists:
+
+```bash
+if [ -f prd.json ]; then
+  # Check what project it's from
+  cat prd.json | jq -r '.project, .branchName'
+fi
+```
+
+**If prd.json exists from a DIFFERENT project:**
+1. Archive it first:
+```bash
+mkdir -p archive
+TIMESTAMP=$(date +%Y-%m-%d-%H%M)
+OLD_PROJECT=$(cat prd.json | jq -r '.project' | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
+mv prd.json "archive/prd-${OLD_PROJECT}-${TIMESTAMP}.json"
+[ -f progress.txt ] && mv progress.txt "archive/progress-${OLD_PROJECT}-${TIMESTAMP}.txt"
+```
+2. Tell the user: "I found an old prd.json from [previous project]. I've archived it to the archive/ folder."
+
+**If prd.json exists from the SAME project:**
+- Ask the user: "There's an existing prd.json for this project. Should I replace it with the new one, or keep the existing one?"
+
+**Then create the new prd.json:**
+
 Say:
 > "Converting to the format needed for autonomous building..."
 
@@ -164,12 +191,18 @@ Convert `tasks/prd.md` to `prd.json` with:
 - Project name
 - Branch name: `ralph/[project-name-kebab-case]`
 - All user stories with priority based on order
-- All stories set to `passes: false`
+- **All stories set to `passes: false`** (this is critical - never copy old pass status!)
 
 Save to `prd.json` in the project root.
 
+**Verify the new prd.json:**
+```bash
+cat prd.json | jq '.project, .userStories | length, (.userStories | map(select(.passes == false)) | length)'
+```
+This should show: project name, total stories, and stories with passes:false (should match total).
+
 Say:
-> "prd.json created with [X] stories ready to build."
+> "prd.json created with [X] stories ready to build. All stories set to passes: false."
 
 ---
 

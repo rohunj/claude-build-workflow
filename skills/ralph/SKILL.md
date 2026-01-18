@@ -248,10 +248,20 @@ Add ability to mark tasks with different statuses.
 
 Before writing prd.json, verify:
 
-- [ ] **Previous run archived** (if prd.json exists with different branchName, archive it first)
+- [ ] **Previous run archived** (if prd.json exists with different branchName, archive it first!)
+- [ ] **ALL stories have `passes: false`** (CRITICAL - never copy old pass status!)
 - [ ] Each story is completable in one iteration (small enough)
 - [ ] Stories are ordered by dependency (schema to backend to UI)
 - [ ] Every story has "Typecheck passes" as criterion
-- [ ] UI stories have "Verify in browser using dev-browser skill" as criterion
+- [ ] UI stories have "Verify in browser" as criterion
 - [ ] Acceptance criteria are verifiable (not vague)
 - [ ] No story depends on a later story
+
+## CRITICAL: Always Reset passes to false
+
+When creating a new prd.json, **ALWAYS** set `passes: false` for every story. Never:
+- Copy pass status from an old prd.json
+- Leave stories marked as `passes: true`
+- Assume previous work carries over
+
+Each new prd.json is a fresh start. The Ralph loop will mark stories as `passes: true` only after successfully implementing them.
