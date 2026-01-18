@@ -1,0 +1,10 @@
+Build [PROJECT NAME] with Claude Code:
+	- Open Terminal @tags(setup)
+	- Go to workflow folder @tags(setup) @notes(cd ~/Library/CloudStorage/Dropbox-Rohun/Ro\ J/Rohun\ Personal/01\ -\ Areas/06\ -\ Coding/claude-build-workflow)
+	- Start Claude: type "claude" @tags(setup)
+	- Say: "Read the CLAUDE.md file and run the workflow to help me build a new project" @tags(planning)
+	- Answer Claude's questions (it guides you through everything) @tags(planning)
+	- When Claude says ready, exit (Ctrl+C) @tags(build)
+	- Go to project folder @tags(build) @notes(cd ~/Desktop/[project-name])
+	- Run build: ./ralph.sh @tags(build)
+	- Check back when done @tags(build)
